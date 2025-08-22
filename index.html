@@ -1,0 +1,697 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>FluentDynamics QueryBuilder – Fluent QueryExpression API for Dynamics 365 / Dataverse</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta name="description" content="FluentDynamics QueryBuilder: Build Dynamics 365 / Dataverse QueryExpression queries with a modern fluent .NET API. Faster, readable, composable." />
+  <meta name="keywords" content="Dynamics 365, Dataverse, Power Platform, QueryExpression, Fluent API, C#, NuGet" />
+  <meta name="author" content="ulaserkus" />
+  <link rel="canonical" href="https://github.com/ulaserkus/fluent-dynamics" />
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="FluentDynamics QueryBuilder" />
+  <meta property="og:description" content="Modern fluent QueryExpression builder for Dynamics 365 / Dataverse." />
+  <meta property="og:url" content="https://ulaserkus.github.io/fluent-dynamics/" />
+  <meta property="og:image" content="https://img.shields.io/nuget/v/FluentDynamics.QueryBuilder.svg" />
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="FluentDynamics QueryBuilder" />
+  <meta name="twitter:description" content="Modern fluent QueryExpression builder for Dynamics 365 / Dataverse." />
+  <meta name="twitter:image" content="https://img.shields.io/nuget/v/FluentDynamics.QueryBuilder.svg" />
+  <meta name="theme-color" content="#0d1117" />
+
+  <!-- Schema.org / JSON-LD -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "SoftwareApplication",
+    "name": "FluentDynamics QueryBuilder",
+    "applicationCategory": "DeveloperTool",
+    "operatingSystem": "Windows, Linux, macOS",
+    "softwareVersion": "1.1.0",
+    "license": "https://opensource.org/licenses/MIT",
+    "url": "https://github.com/ulaserkus/fluent-dynamics",
+    "downloadUrl": "https://www.nuget.org/packages/FluentDynamics.QueryBuilder/",
+    "programmingLanguage": "C#",
+    "description": "Fluent API library for building Dynamics 365 / Dataverse QueryExpressions.",
+    "author": {
+      "@type": "Person",
+      "name": "ulaserkus"
+    }
+  }
+  </script>
+
+  <!-- Google Analytics (GA4) -->
+  <!-- Replace G-XXXXXXXXXX with your GA4 Measurement ID -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){ dataLayer.push(arguments); }
+    gtag('js', new Date());
+    gtag('config', 'G-XXXXXXXXXX'); // GA4 ID
+
+    // Unified install / conversion tracking
+    function trackInstall(source){
+      gtag('event','install_click',{
+        event_category:'engagement',
+        event_label: source || 'primary_cta',
+        value: 1
+      });
+    }
+  </script>
+
+  <style>
+    :root {
+      --bg:#0d1117;
+      --bg-alt:#161b22;
+      --border:#30363d;
+      --text:#e6edf3;
+      --text-dim:#9da7b3;
+      --accent:#3b82f6;
+      --accent-hover:#1d4ed8;
+      --code-bg:#1e2630;
+      --radius:10px;
+      --danger:#ef4444;
+      --ok:#10b981;
+      --warn:#f59e0b;
+      font-family: system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,'Helvetica Neue',Arial,sans-serif;
+    }
+    *{box-sizing:border-box;}
+    body {
+      margin:0;
+      background:linear-gradient(135deg,#0d1117,#101923 55%,#132235);
+      color:var(--text);
+      -webkit-font-smoothing:antialiased;
+      line-height:1.45;
+    }
+    header {
+      padding: clamp(2.5rem,6vw,6rem) 1.25rem 2rem;
+      max-width:1120px;
+      margin:auto;
+      text-align:center;
+      position:relative;
+    }
+    header h1 {
+      font-size: clamp(2.2rem,5vw,3.6rem);
+      margin:.2em 0 .4em;
+      background:linear-gradient(90deg,#60a5fa,#93c5fd,#bfdbfe);
+      -webkit-background-clip:text;
+      color:transparent;
+      font-weight:700;
+      letter-spacing:-1px;
+    }
+    header p.lead {
+      font-size: clamp(1.05rem,1.6vw,1.35rem);
+      max-width:860px;
+      margin:0 auto 2rem;
+      color:var(--text-dim);
+    }
+    .badges {
+      display:flex;
+      flex-wrap:wrap;
+      gap:.65rem;
+      justify-content:center;
+      margin:1.2rem 0 1.8rem;
+    }
+    .badges img {height:24px;}
+    .cta-row {
+      display:flex;
+      flex-wrap:wrap;
+      gap:1rem;
+      justify-content:center;
+      margin-bottom:2.4rem;
+    }
+    .btn {
+      --btn-bg:var(--accent);
+      --btn-bg-hover:var(--accent-hover);
+      --btn-color:#fff;
+      background:var(--btn-bg);
+      color:var(--btn-color);
+      padding:.95rem 1.55rem;
+      font-size:1rem;
+      font-weight:600;
+      border:none;
+      border-radius: var(--radius);
+      cursor:pointer;
+      text-decoration:none;
+      display:inline-flex;
+      gap:.55rem;
+      align-items:center;
+      position:relative;
+      overflow:hidden;
+      transition:.25s background, .25s transform;
+    }
+    .btn:hover {background:var(--btn-bg-hover);}
+    .btn:active {transform:translateY(2px);}
+    .btn.outline {
+      background:transparent;
+      border:1px solid var(--border);
+      color:var(--text);
+    }
+    .btn.outline:hover {
+      background:var(--bg-alt);
+    }
+    main {max-width:1120px;margin:auto;padding:0 1.25rem 5rem;}
+    section {margin:3.5rem 0;}
+    section h2 {
+      font-size: clamp(1.6rem,3vw,2.2rem);
+      margin:0 0 1rem;
+      letter-spacing:-.5px;
+    }
+    .sub {
+      color:var(--text-dim);
+      margin:0 0 2rem;
+      font-size:1.02rem;
+      max-width:760px;
+    }
+    .grid {display:grid; gap:1.25rem;}
+    @media (min-width:900px){
+      .grid.cols-3 {grid-template-columns:repeat(3,1fr);}
+      .grid.cols-2 {grid-template-columns:repeat(2,1fr);}
+    }
+    .card {
+      background:linear-gradient(145deg,#111a24,#0d141b);
+      border:1px solid var(--border);
+      padding:1.15rem 1.25rem 1.3rem;
+      border-radius:var(--radius);
+      position:relative;
+      overflow:hidden;
+    }
+    .card h3 {margin:.2rem 0 .6rem; font-size:1.1rem; font-weight:600; letter-spacing:.2px;}
+    .card p {margin:0;font-size:.9rem;color:var(--text-dim);}
+    code, pre {
+      font-family: ui-monospace,SFMono-Regular,Consolas,"Liberation Mono",Menlo,monospace;
+      font-size:.85rem;
+      line-height:1.4;
+    }
+    pre {
+      background:var(--code-bg);
+      color:var(--text);
+      padding:1rem 1rem 1.2rem;
+      border:1px solid #243040;
+      border-radius: var(--radius);
+      position:relative;
+      margin:1rem 0 2rem;
+      overflow:auto;
+      max-height:520px;
+    }
+    .copy-btn {
+      position:absolute;
+      top:.55rem;
+      right:.55rem;
+      background:#202b37;
+      border:1px solid #334150;
+      color:var(--text-dim);
+      font-size:.65rem;
+      padding:.4rem .6rem;
+      border-radius:6px;
+      cursor:pointer;
+      letter-spacing:.5px;
+      text-transform:uppercase;
+      transition:.25s;
+    }
+    .copy-btn:hover {color:#fff;border-color:#4b5e72;}
+    .tag-pills {display:flex;flex-wrap:wrap;gap:.5rem;margin:1.2rem 0 0;}
+    .tag {
+      background:#1d2732;
+      border:1px solid #283646;
+      padding:.35rem .65rem;
+      font-size:.65rem;
+      border-radius:20px;
+      letter-spacing:.5px;
+      color:#9fb3c6;
+      text-transform:uppercase;
+      font-weight:600;
+    }
+    .feature-icon {font-size:1.3rem;display:inline-block;width:1.6rem;}
+    .two-col {display:grid;gap:2.25rem;}
+    @media (min-width:1100px){
+      .two-col {grid-template-columns: 1fr 1fr;align-items:start;}
+    }
+    details {
+      background:var(--bg-alt);
+      border:1px solid var(--border);
+      padding:.9rem 1rem;
+      border-radius: var(--radius);
+      margin-bottom:.75rem;
+    }
+    details summary {
+      cursor:pointer;
+      font-weight:600;
+      font-size:.95rem;
+      outline:none;
+      list-style:none;
+    }
+    details[open] summary {color:var(--accent);}
+    footer {
+      border-top:1px solid var(--border);
+      margin-top:4rem;
+      padding:2.5rem 1.25rem 3.5rem;
+      text-align:center;
+      background:#0c141c;
+    }
+    footer p {color:var(--text-dim);font-size:.8rem;margin:.4rem 0;}
+    .pulse {
+      position:absolute;
+      inset:0;
+      background:
+        radial-gradient(circle at 30% 15%, rgba(96,165,250,0.08), transparent 55%),
+        radial-gradient(circle at 75% 65%, rgba(59,130,246,0.07), transparent 60%),
+        radial-gradient(circle at 50% 100%, rgba(29,78,216,0.06), transparent 70%);
+      pointer-events:none;
+      mix-blend-mode:screen;
+    }
+    .hero-accent {
+      position:absolute;
+      top:-120px;
+      left:50%;
+      width:900px;
+      height:900px;
+      transform:translateX(-50%);
+      background:radial-gradient(circle at center,rgba(56,110,180,.22),rgba(13,17,23,0) 70%);
+      filter:blur(40px);
+      z-index:-1;
+      opacity:.6;
+    }
+    .inline-code {
+      background:#1d2732;
+      padding:.2rem .45rem;
+      border-radius:6px;
+      font-size:.75rem;
+      border:1px solid #2c3b4a;
+      color:#bcd3e8;
+    }
+    a {color:#60a5fa;text-decoration:none;}
+    a:hover {text-decoration:underline;}
+    .stat-cards {
+      display:grid;
+      gap:1rem;
+      grid-template-columns:repeat(auto-fit,minmax(160px,1fr));
+      margin:2rem 0 0;
+    }
+    .stat {
+      background:linear-gradient(150deg,#112130,#0f1a27);
+      border:1px solid #223343;
+      padding:.9rem 1rem;
+      border-radius: var(--radius);
+    }
+    .stat h4 {
+      margin:.2rem 0 .4rem;
+      font-size:.75rem;
+      letter-spacing:.5px;
+      font-weight:600;
+      color:var(--text-dim);
+      text-transform:uppercase;
+    }
+    .stat p {
+      margin:0;
+      font-size:1.3rem;
+      font-weight:600;
+      background:linear-gradient(90deg,#93c5fd,#60a5fa);
+      -webkit-background-clip:text;
+      color:transparent;
+    }
+    .gradient-bar {
+      height:3px;
+      background:linear-gradient(90deg,#2563eb,#3b82f6,#60a5fa,#2563eb);
+      background-size:200% 100%;
+      animation:move 8s linear infinite;
+      border-radius:4px;
+      margin: 0 auto 2.5rem;
+      max-width:220px;
+    }
+    @keyframes move {0%{background-position:0 0;}100%{background-position:200% 0;}}
+    .gh-star {
+      display:inline-flex;
+      align-items:center;
+      gap:.4rem;
+      padding:.45rem .8rem;
+      border:1px solid #273646;
+      background:#16202a;
+      border-radius:8px;
+      font-size:.75rem;
+      color:#d0dae5;
+      text-decoration:none;
+      font-weight:600;
+      letter-spacing:.4px;
+    }
+    .gh-star:hover {background:#1d2933;text-decoration:none;}
+    .notice {font-size:.7rem;color:#657385;margin-top:1.2rem;}
+    .code-tabs {display:flex;gap:.4rem;margin-bottom:.6rem;flex-wrap:wrap;}
+    .code-tabs button {
+      background:#182635;
+      border:1px solid #223344;
+      color:#9fb1c4;
+      padding:.45rem .75rem;
+      border-radius:6px;
+      cursor:pointer;
+      font-size:.7rem;
+      font-weight:600;
+      letter-spacing:.5px;
+      text-transform:uppercase;
+    }
+    .code-tabs button.active {
+      background:#255186;
+      color:#fff;
+      border-color:#2f6ab3;
+    }
+    .fade-in {animation:fade .7s ease;}
+    @keyframes fade {from{opacity:0;transform:translateY(4px);}to{opacity:1;transform:translateY(0);} }
+    .divider {height:1px;background:linear-gradient(90deg,transparent,#223243,transparent);margin:3.5rem 0 3rem;}
+  </style>
+</head>
+<body>
+  <div class="hero-accent"></div>
+  <header>
+    <div class="pulse"></div>
+    <h1>FluentDynamics QueryBuilder</h1>
+    <p class="lead">
+      A modern fluent <span class="inline-code">QueryExpression</span> builder for Dynamics 365 / Dataverse.
+      Write <strong>faster, cleaner, testable</strong> queries: complex filters, joins, pagination, async execution, FetchXML conversion – all with chainable syntax.
+    </p>
+
+    <div class="badges">
+      <a href="https://www.nuget.org/packages/FluentDynamics.QueryBuilder/?utm_source=landing&utm_medium=badge&utm_campaign=nuget" target="_blank">
+        <img alt="NuGet" src="https://img.shields.io/nuget/v/FluentDynamics.QueryBuilder.svg" />
+      </a>
+      <img alt="License" src="https://img.shields.io/github/license/ulaserkus/fluent-dynamics" />
+      <img alt="Line Coverage" src="https://img.shields.io/badge/line%20coverage-85.35%25-brightgreen" />
+      <img alt="Tests" src="https://img.shields.io/badge/tests-180%20passed-brightgreen" />
+    </div>
+
+    <div class="cta-row">
+      <a class="btn" href="https://www.nuget.org/packages/FluentDynamics.QueryBuilder/?utm_source=landing&utm_medium=cta&utm_campaign=install_top"
+         target="_blank" onclick="trackInstall('nuget_top')">
+        🚀 Install via NuGet
+      </a>
+      <a class="btn outline" href="https://github.com/ulaserkus/fluent-dynamics" target="_blank" onclick="trackInstall('github_repo_top')">
+        ⭐ View on GitHub
+      </a>
+      <a class="gh-star" href="https://github.com/ulaserkus/fluent-dynamics" target="_blank" rel="noopener">
+        <span>⭐</span> Give a Star
+      </a>
+    </div>
+
+    <div class="gradient-bar"></div>
+
+    <div class="stat-cards">
+      <div class="stat"><h4>Line Coverage</h4><p>85.35%</p></div>
+      <div class="stat"><h4>Branch Coverage</h4><p>72.72%</p></div>
+      <div class="stat"><h4>Method Coverage</h4><p>94.55%</p></div>
+      <div class="stat"><h4>Tests</h4><p>180</p></div>
+    </div>
+  </header>
+
+  <main>
+    <!-- Features -->
+    <section id="features">
+      <h2>Key Features</h2>
+      <p class="sub">Reduce query boilerplate, prevent errors, and improve readability & maintainability.</p>
+      <div class="grid cols-3">
+        <div class="card fade-in">
+          <h3><span class="feature-icon">🔄</span> Fluent Chaining</h3>
+          <p>Eliminates verbose <code>QueryExpression</code> instantiation and nested objects.</p>
+        </div>
+        <div class="card fade-in">
+          <h3><span class="feature-icon">🧠</span> Rich Filter DSL</h3>
+          <p>Operators like <code>.Equal()</code>, <code>.In()</code>, <code>.LastXDays()</code>, <code>.IsNull()</code>, hierarchy/user/fiscal helpers.</p>
+        </div>
+        <div class="card fade-in">
+          <h3><span class="feature-icon">⚡</span> Async + Pagination</h3>
+          <p>High-volume datasets with page iteration & true async via <code>IOrganizationServiceAsync2</code>.</p>
+        </div>
+        <div class="card fade-in">
+          <h3><span class="feature-icon">🔗</span> Intuitive Joins</h3>
+          <p><code>.InnerJoin()</code>, <code>.LeftOuterJoin()</code>, <code>.CrossApplyJoin()</code>, <code>.ExistsJoin()</code> etc.</p>
+        </div>
+        <div class="card fade-in">
+          <h3><span class="feature-icon">🛠️</span> Advanced Options</h3>
+          <p><code>.Distinct()</code>, <code>.NoLock()</code>, <code>.ForceSeek()</code>, <code>.QueryHint()</code>.</p>
+        </div>
+        <div class="card fade-in">
+          <h3><span class="feature-icon">🧩</span> FetchXML Export</h3>
+          <p>Convert the built query to FetchXML instantly for tools or reporting.</p>
+        </div>
+      </div>
+      <div class="tag-pills">
+        <div class="tag">Fluent API</div>
+        <div class="tag">QueryExpression</div>
+        <div class="tag">Dataverse</div>
+        <div class="tag">Dynamics 365</div>
+        <div class="tag">FetchXML</div>
+        <div class="tag">Async</div>
+        <div class="tag">Pagination</div>
+        <div class="tag">Joins</div>
+      </div>
+    </section>
+
+    <div class="divider"></div>
+
+    <!-- Installation -->
+    <section id="installation">
+      <h2>Installation</h2>
+      <div class="two-col">
+        <div>
+          <p class="sub">Add via NuGet and start composing queries immediately.</p>
+          <pre><button class="copy-btn" data-copy="nuget-install">Copy</button><code id="nuget-install">dotnet add package FluentDynamics.QueryBuilder</code></pre>
+          <p><strong>Package ID:</strong> <code>FluentDynamics.QueryBuilder</code></p>
+          <p class="notice">.NET Standard 2.0 – compatible with .NET Framework 4.7.2+, .NET 6/7/8.</p>
+        </div>
+        <div>
+          <h3 style="margin-top:0;">Basic Example</h3>
+          <pre><button class="copy-btn" data-copy="example-basic">Copy</button><code id="example-basic">using FluentDynamics.QueryBuilder;
+using FluentDynamics.QueryBuilder.Extensions;
+using Microsoft.Xrm.Sdk;
+using Microsoft.Xrm.Sdk.Query;
+
+// Get first 5 active accounts
+var query = Query.For("account")
+    .Select("name", "accountnumber", "telephone1")
+    .Where(f => f.Equal("statecode", 0))
+    .OrderBy("name")
+    .Top(5);
+
+EntityCollection result = query.RetrieveMultiple(orgService);
+
+foreach (var acc in result.Entities)
+{
+    Console.WriteLine(acc.GetAttributeValue&lt;string&gt;("name"));
+}</code></pre>
+        </div>
+      </div>
+    </section>
+
+    <!-- Code Samples -->
+    <section id="code-samples">
+      <h2>Code Samples</h2>
+      <p class="sub">Real-world snippets for common scenarios.</p>
+
+      <div class="code-tabs">
+        <button class="active" data-tab="complex">Complex Filter</button>
+        <button data-tab="joins">Joins + Aliases</button>
+        <button data-tab="pagination">Pagination &amp; Async</button>
+        <button data-tab="fetchxml">FetchXML Conversion</button>
+      </div>
+
+      <div id="code-panels">
+        <pre data-panel="complex">
+<button class="copy-btn" data-copy="code-complex">Copy</button>
+<code id="code-complex">var recentContacts = Query.For("contact")
+    .Select("firstname", "lastname", "emailaddress1", "createdon")
+    .Where(f => f
+        .Equal("statecode", 0)
+        .And(a => a
+            .LastXDays("createdon", 30)
+            .IsNotNull("emailaddress1"))
+        .Or(o => o
+            .Like("emailaddress1", "%@example.com")
+            .In("address1_city", "Seattle", "London", "Berlin"))
+    )
+    .OrderBy("lastname")
+    .OrderBy("firstname");
+
+var results = recentContacts.RetrieveMultiple(service);</code></pre>
+
+        <pre data-panel="joins" style="display:none">
+<button class="copy-btn" data-copy="code-joins">Copy</button>
+<code id="code-joins">var opportunities = Query.For("opportunity")
+    .Select("name", "estimatedvalue", "closeprobability")
+    .Where(f => f.Equal("statecode", 0))
+    .InnerJoin("account", "customerid", "accountid", link => link
+        .Select("name", "accountnumber")
+        .As("acc")
+        .Where(f => f.Equal("statecode", 0)))
+    .LeftOuterJoin("contact", "customerid", "contactid", link => link
+        .Select("fullname", "emailaddress1")
+        .As("con"));
+
+var data = opportunities.RetrieveMultiple(service);
+
+foreach (var o in data.Entities)
+{
+    var accountName = o.GetAttributeValue&lt;AliasedValue&gt;("acc.name")?.Value;
+    var contactName = o.GetAttributeValue&lt;AliasedValue&gt;("con.fullname")?.Value;
+}</code></pre>
+
+        <pre data-panel="pagination" style="display:none">
+<button class="copy-btn" data-copy="code-pagination">Copy</button>
+<code id="code-pagination">// Paginate through all records
+var baseQuery = Query.For("account")
+    .Select("name")
+    .OrderBy("name")
+    .Top(1000); // optional limit
+
+int page = 1;
+int size = 500;
+bool more;
+string cookie = null;
+var all = new List&lt;Entity&gt;();
+
+do {
+    var pageResult = baseQuery.RetrieveMultiple(service, page, size);
+    all.AddRange(pageResult.Entities);
+    more = pageResult.MoreRecords;
+    cookie = pageResult.PagingCookie;
+    page++;
+} while (more);
+
+// True async version
+var asyncResults = await baseQuery.RetrieveMultipleAllPagesAsync(asyncService);</code></pre>
+
+        <pre data-panel="fetchxml" style="display:none">
+<button class="copy-btn" data-copy="code-fetchxml">Copy</button>
+<code id="code-fetchxml">// Convert current query to FetchXML
+var q = Query.For("account")
+    .Select("name")
+    .Where(f => f.Like("name", "Contoso%"));
+
+var fetchExpression = q.ToFetchExpression(service);
+Console.WriteLine(fetchExpression.Query);</code></pre>
+      </div>
+    </section>
+
+    <!-- Advanced Usage -->
+    <section id="advanced">
+      <h2>Advanced Usage</h2>
+      <div class="two-col">
+        <div>
+          <h3>Filter DSL (Syntactic Sugar)</h3>
+            <p class="sub">Minimizes verbose <code>ConditionOperator</code> usage.</p>
+            <pre><button class="copy-btn" data-copy="code-dsl">Copy</button><code id="code-dsl">var tasks = Query.For("task")
+  .Select("subject","scheduledend","ownerid")
+  .Where(f => f
+      .Equal("statecode", 0)
+      .And(a => a.OnOrAfter("scheduledend", DateTime.Today))
+      .And(a => a.EqualUserId("ownerid"))
+  )
+  .OrderBy("scheduledend");</code></pre>
+        </div>
+        <div>
+          <h3>Clone &amp; Debug</h3>
+          <p class="sub">Fork queries safely and inspect structure with <code>.DebugView()</code>.</p>
+          <pre><button class="copy-btn" data-copy="code-clone">Copy</button><code id="code-clone">var baseQ = Query.For("account")
+    .Select("name","accountnumber")
+    .Where(f => f.Equal("statecode",0));
+
+var variant = baseQ.DeepClone()
+    .Where(f => f.Equal("name","Contoso"));
+
+Console.WriteLine(baseQ.DebugView());
+Console.WriteLine(variant.DebugView());</code></pre>
+        </div>
+      </div>
+    </section>
+
+    <!-- FAQ -->
+    <section id="faq">
+      <h2>FAQ</h2>
+      <details>
+        <summary>Which SDK objects does this wrap?</summary>
+        <p>It uses Microsoft Power Platform Dataverse Client &amp; Microsoft.Xrm.Sdk primitives, providing only a fluent query construction layer.</p>
+      </details>
+      <details>
+        <summary>Does it improve runtime performance?</summary>
+        <p>Your server-side query execution characteristics remain those of standard <code>QueryExpression</code>. Gains come from reduced code noise, fewer errors, faster iteration, and easier optimization (hints, ForceSeek, NoLock made accessible).</p>
+      </details>
+      <details>
+        <summary>Why FetchXML conversion?</summary>
+        <p>Various tools, dashboards and advanced reporting scenarios require FetchXML; instant conversion speeds prototyping.</p>
+      </details>
+      <details>
+        <summary>Framework compatibility?</summary>
+        <p>.NET Standard 2.0 – works with .NET Framework 4.7.2+, .NET Core 3.1+, .NET 5/6/7/8.</p>
+      </details>
+      <details>
+        <summary>What about test coverage?</summary>
+        <p>Lines 85%+, Methods 94%+, Branches 72%+; 180 passing tests.</p>
+      </details>
+      <details>
+        <summary>Can I contribute?</summary>
+        <p>Yes. Open Issues / PRs on GitHub. Licensed MIT.</p>
+      </details>
+    </section>
+
+    <!-- Bottom CTA -->
+    <section id="cta-bottom" style="text-align:center;margin-top:4.5rem;">
+      <h2 style="margin-bottom:.6rem;">Start Building Cleaner Queries Today</h2>
+      <p class="sub" style="margin-inline:auto;">Readable, maintainable Dataverse / Dynamics query composition in minutes.</p>
+      <div class="cta-row">
+        <a class="btn" href="https://www.nuget.org/packages/FluentDynamics.QueryBuilder/?utm_source=landing&utm_medium=cta&utm_campaign=install_bottom"
+           target="_blank" onclick="trackInstall('nuget_bottom')">⬇️ Get the Package</a>
+        <a class="btn outline" href="https://github.com/ulaserkus/fluent-dynamics" target="_blank" onclick="trackInstall('github_repo_bottom')">Browse Source</a>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <p>&copy; <span id="year"></span> FluentDynamics QueryBuilder · MIT Licensed</p>
+    <p><a href="https://github.com/ulaserkus/fluent-dynamics" target="_blank" rel="noopener">GitHub</a> ·
+       <a href="https://www.nuget.org/packages/FluentDynamics.QueryBuilder/" target="_blank" rel="noopener">NuGet</a></p>
+    <p class="notice">All product / company names are property of their respective owners.</p>
+  </footer>
+
+  <script>
+    // Year
+    document.getElementById('year').textContent = new Date().getFullYear();
+
+    // Copy buttons
+    document.querySelectorAll('.copy-btn').forEach(btn=>{
+      btn.addEventListener('click',()=>{
+        const id = btn.getAttribute('data-copy');
+        const el = document.getElementById(id);
+        const text = el.innerText;
+        navigator.clipboard.writeText(text).then(()=>{
+          btn.textContent='Copied';
+          btn.style.background='#2563eb';
+          btn.style.color='#fff';
+          setTimeout(()=>{ btn.textContent='Copy'; btn.style.background=''; btn.style.color=''; },1600);
+        });
+      });
+    });
+
+    // Code tabs
+    const tabButtons = document.querySelectorAll('.code-tabs button');
+    const panels = document.querySelectorAll('#code-panels pre');
+    tabButtons.forEach(b=>{
+      b.addEventListener('click',()=>{
+        tabButtons.forEach(x=>x.classList.remove('active'));
+        b.classList.add('active');
+        const t = b.getAttribute('data-tab');
+        panels.forEach(p=>{
+          p.style.display = p.getAttribute('data-panel') === t ? 'block' : 'none';
+        });
+      });
+    });
+
+    // Prefetch placeholder
+    const links = document.querySelectorAll('a[target=_blank]');
+    links.forEach(l=>{
+      l.addEventListener('mouseenter',()=>{
+        if(!l.dataset.prefetched){
+          l.dataset.prefetched = '1';
+          // Potential lightweight prefetch logic could go here.
+        }
+      });
+    });
+  </script>
+</body>
+</html>
